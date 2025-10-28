@@ -1,6 +1,7 @@
 package co.onclass.config;
 
 import co.onclass.model.bootcamp.gateways.BootcampRepository;
+import co.onclass.model.capacidad.gateways.CapacidadGateway;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -41,6 +42,11 @@ public class UseCasesConfigTest {
         @Bean
         public BootcampRepository bootcampRepository() {
             return Mockito.mock(BootcampRepository.class);
+        }
+
+        @Bean
+        public CapacidadGateway capacidadGateway() {
+            return Mockito.mock(CapacidadGateway.class);
         }
     }
 

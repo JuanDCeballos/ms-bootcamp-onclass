@@ -23,4 +23,9 @@ public class BootcampReactiveRepositoryAdapter extends ReactiveAdapterOperations
     public Mono<Bootcamp> guardarBootcamp(Bootcamp bootcamp) {
         return save(bootcamp);
     }
+
+    @Override
+    public Mono<Bootcamp> buscarPorId(Long idBootcamp) {
+        return findById(idBootcamp);
+    }
 }
