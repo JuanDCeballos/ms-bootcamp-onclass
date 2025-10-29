@@ -20,6 +20,7 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
 import static co.onclass.api.constants.ApiConstants.*;
+import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
@@ -89,10 +90,55 @@ public class RouterRest {
                                     )
                             }
                     )
+            ),
+            @RouterOperation(
+                    path = OBTENER_BOOTCAMPS,
+                    method = RequestMethod.GET,
+                    beanClass = Handler.class,
+                    beanMethod = "listenGETBootcamps",
+                    operation = @Operation(
+                            operationId = "obtenerBootcampsPaginados",
+                            summary = "Lista de los Bootcamps paginados y filtrados",
+                            parameters = {
+                                    @Parameter(
+                                            in = ParameterIn.QUERY,
+                                            name = "page",
+                                            description = "Página de la petición"
+                                    ),
+                                    @Parameter(
+                                            in = ParameterIn.QUERY,
+                                            name = "size",
+                                            description = "Cantidad de elementos a mostrar en la página"
+                                    ),
+                                    @Parameter(
+                                            in = ParameterIn.QUERY,
+                                            name = "sortBy",
+                                            description = "Campo por el cual se ordenarán los elementos"
+                                    ),
+                                    @Parameter(
+                                            in = ParameterIn.QUERY,
+                                            name = "order",
+                                            description = "Orden en que se mostrarán los elementos"
+                                    )
+                            },
+                            responses = {
+                                    @ApiResponse(
+                                            responseCode = "200",
+                                            description = "Bootcamps paginados y filtrados exitosamente"
+//                                            content = @Content(schema = @Schema(implementation = PaginaDto.class))
+                                    ),
+                                    @ApiResponse(
+                                            responseCode = "400",
+                                            description = "Datos invalidos",
+                                            content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))
+                                    )
+                            }
+                    )
             )
     })
     public RouterFunction<ServerResponse> routerFunction(Handler handler) {
         return route(POST(GUARDAR_BOOTCAMP), handler::listenPOSTGuardarBootcamp)
-                .andRoute(POST(ASIGNAR_CAPACIDADES), handler::listenPOSTAsignarCapacidades);
+                .andRoute(POST(ASIGNAR_CAPACIDADES), handler::listenPOSTAsignarCapacidades)
+                .andRoute(GET(OBTENER_BOOTCAMPS), handler::listenGETBootcamps);
     }
 }
