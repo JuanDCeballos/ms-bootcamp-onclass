@@ -5,6 +5,8 @@ import co.onclass.api.dto.bootcamp.BootcampRequestDto;
 import co.onclass.api.dto.bootcamp.CapacidadesBootcampRequestDto;
 import co.onclass.api.utils.BootcampMapper;
 import co.onclass.api.validation.ValidationService;
+import co.onclass.enums.SortDirection;
+import co.onclass.model.paging.PageableQuery;
 import co.onclass.usecase.bootcamp.BootcampUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -49,6 +51,26 @@ public class Handler {
                         status(201)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .bodyValue(new ApiSuccessResponse<>(capacidadesAsignadas))
+                );
+    }
+
+    public Mono<ServerResponse> listenGETBootcamps(ServerRequest serverRequest) {
+        int page = serverRequest.queryParam("page").map(Integer::parseInt).orElse(0);
+        int size = serverRequest.queryParam("size").map(Integer::parseInt).orElse(10);
+        String sortBy = serverRequest.queryParam("sortBy").orElse("nombre");
+        String order = serverRequest.queryParam("order").orElse("ASC");
+
+        SortDirection direction = "DESC".equalsIgnoreCase(order)
+                ? SortDirection.DESC
+                : SortDirection.ASC;
+
+        PageableQuery pageableQuery = new PageableQuery(page, size, sortBy, direction);
+
+        return bootcampUseCase.listarBootcampsPaginados(pageableQuery)
+                .flatMap(pagina ->
+                        ServerResponse.ok()
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(pagina)
                 );
     }
 }
